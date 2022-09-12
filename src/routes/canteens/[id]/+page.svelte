@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { API } from '$lib/api.js'
-	import type { CanteenDay, Meal } from '$lib/types.js'
+	import type { Meal } from '$lib/types.js'
 	import type { PageData } from './$types'
 
 	export let data: PageData
 
-	const { canteen, days: allDays } = data
+	let { canteen, days, meals: initialMeals } = data
 
-	/// Seems like `closed` is actually open 🧐
-	let days = allDays.filter((day) => day.closed == false)
+	let date: string = days.length > 0 ? days[0].date : ''
+	let meals: Promise<Meal[]> | Meal[] = initialMeals
 
-	let day: CanteenDay | undefined = days.length > 0 ? days[0] : undefined
-
-	$: meals = day ? API.meals.list(canteen.id, day.date) : ([] as Meal[])
+	function updateMeals() {
+		meals = API.meals.list(canteen.id, date)
+	}
 </script>
 
 <h1>{canteen.name}</h1>
@@ -20,9 +20,9 @@
 <p>Days</p>
 
 {#if days.length > 0}
-	<select bind:value={day}>
-		{#each days.filter((d) => d.closed !== true) as day}
-			<option value={day}>{day.date}</option>
+	<select bind:value={date} on:change={updateMeals}>
+		{#each days.filter((d) => d.closed !== true) as d, i}
+			<option value={d.date}>{d.date}</option>
 		{/each}
 	</select>
 {/if}
