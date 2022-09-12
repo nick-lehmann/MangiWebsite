@@ -5,6 +5,7 @@
 			"type": "npm",
 			"label": "dev",
 			"script": "dev",
+			"isBackground": true,
 			"problemMatcher": []
 		},
 		{
