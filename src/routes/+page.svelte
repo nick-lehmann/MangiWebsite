@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Canteen } from '../lib/types.js'
-
 	import type { PageData } from './$types'
 
 	export let data: PageData
@@ -40,6 +39,10 @@
 
 <ul>
 	{#each canteens as canteen}
-		<li>{canteen.name} ({canteen.city})</li>
+		<li>
+			<a href="canteens/{canteen.id}">
+				{canteen.name} ({canteen.city})
+			</a>
+		</li>
 	{/each}
 </ul>

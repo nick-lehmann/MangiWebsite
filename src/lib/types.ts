@@ -1,9 +1,15 @@
+export type CanteenID = number
 export type Canteen = {
-	id: number
+	id: CanteenID
 	name: string
 	city: string
 	address: string
 	coordinates: number[]
+}
+
+export type CanteenDay = {
+	date: string
+	closed: boolean
 }
 
 export type Meal = {
