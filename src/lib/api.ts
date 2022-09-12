@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit'
-import type { Canteen, CanteenDay, CanteenID } from './types.js'
+import type { Canteen, CanteenDay, CanteenID, Meal } from './types.js'
 
 export const BASE_URL = 'https://openmensa.org/api/v2'
 
@@ -32,7 +32,12 @@ export const API = {
 	},
 	days: {
 		list: async (canteen_id: CanteenID): Promise<CanteenDay[]> => {
-			return api(`GET`, `/canteens/${canteen_id}/days`)
+			return api('GET', `/canteens/${canteen_id}/days`)
+		}
+	},
+	meals: {
+		list: async (canteen_id: CanteenID, date: string): Promise<Meal[]> => {
+			return api('GET', `/canteens/${canteen_id}/days/${date}/meals`)
 		}
 	}
 }
