@@ -5,9 +5,12 @@
 
 	export let data: PageData
 
-	const { canteen, days } = data
+	const { canteen, days: allDays } = data
 
-	let day: CanteenDay | undefined
+	/// Seems like `closed` is actually open 🧐
+	let days = allDays.filter((day) => day.closed == false)
+
+	let day: CanteenDay | undefined = days.length > 0 ? days[0] : undefined
 
 	$: meals = day ? API.meals.list(canteen.id, day.date) : ([] as Meal[])
 </script>
@@ -16,12 +19,13 @@
 
 <p>Days</p>
 
-<select bind:value={day}>
-	<!-- <option value={undefined}>-------</option> -->
-	{#each days.filter((d) => d.closed !== true) as day}
-		<option value={day}>{day.date}</option>
-	{/each}
-</select>
+{#if days.length > 0}
+	<select bind:value={day}>
+		{#each days.filter((d) => d.closed !== true) as day}
+			<option value={day}>{day.date}</option>
+		{/each}
+	</select>
+{/if}
 
 {#await meals}
 	<p>Loading...</p>
