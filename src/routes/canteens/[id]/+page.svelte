@@ -8,16 +8,14 @@
 	let { canteen, days, meals: initialMeals } = data
 
 	let date: string = days.length > 0 ? days[0].date : ''
-	let meals: Promise<Meal[]> | Meal[] = initialMeals
+	let mealsFetch: Promise<Meal[]> | Meal[] = initialMeals
 
 	function updateMeals() {
-		meals = API.meals.list(canteen.id, date)
+		mealsFetch = API.meals.list(canteen.id, date)
 	}
 </script>
 
 <h1>{canteen.name}</h1>
-
-<p>Days</p>
 
 {#if days.length > 0}
 	<select bind:value={date} on:change={updateMeals}>
@@ -27,12 +25,16 @@
 	</select>
 {/if}
 
-{#await meals}
+{#await mealsFetch}
 	<p>Loading...</p>
-{:then data}
-	<ul>
-		{#each data as meal}
-			<li>{meal.name}</li>
-		{/each}
-	</ul>
+{:then meals}
+	{#if meals.length > 0}
+		<ul>
+			{#each meals as meal}
+				<li>{meal.name}</li>
+			{/each}
+		</ul>
+	{:else}
+		<p>No meals found</p>
+	{/if}
 {/await}
