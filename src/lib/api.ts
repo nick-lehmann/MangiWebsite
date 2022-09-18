@@ -24,19 +24,23 @@ async function api<T>(
 export const API = {
 	canteens: {
 		list: async (): Promise<Canteen[]> => {
+			console.debug('[API] Listing all canteens')
 			return api('GET', '/canteens')
 		},
 		get: async (canteen_id: CanteenID): Promise<Canteen> => {
+			console.debug('[API] Fetching single canteen')
 			return api('GET', `/canteens/${canteen_id}`)
 		}
 	},
 	days: {
 		list: async (canteen_id: CanteenID): Promise<CanteenDay[]> => {
+			console.debug('[API] Listing all days')
 			return api('GET', `/canteens/${canteen_id}/days`)
 		}
 	},
 	meals: {
 		list: async (canteen_id: CanteenID, date: string): Promise<Meal[]> => {
+			console.debug('[API] Listing all meals')
 			return api('GET', `/canteens/${canteen_id}/days/${date}/meals`)
 		}
 	}

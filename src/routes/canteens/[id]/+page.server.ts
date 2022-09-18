@@ -1,5 +1,5 @@
 import { API } from '$lib/api.js'
-import { openDays } from '../../../lib/utils.js'
+import { openDays } from '$lib/utils.js'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ params }) => {
