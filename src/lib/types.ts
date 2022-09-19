@@ -7,8 +7,9 @@ export type Canteen = {
 	coordinates: number[]
 }
 
+export type DayString = string
 export type CanteenDay = {
-	date: string
+	date: DayString
 	closed: boolean
 }
 
