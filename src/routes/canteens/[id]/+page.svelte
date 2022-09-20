@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { API } from '$lib/api.js'
-	import type { Meal } from '$lib/types.js'
+	import type { CanteenID, Meal } from '$lib/types.js'
 	import type { PageData } from './$types'
 	import type { DayString } from '$lib/types.js'
-	import { isValid, type CacheItem } from '$lib/cache.js'
-	import { DateTime, Duration } from 'luxon'
+	import { Duration } from 'luxon'
+	import { createCache, type FetchFunction } from '$lib/cache/cache.js'
 
 	export let data: PageData
 
@@ -16,23 +16,25 @@
 	// 1) Present in cache and still valid => reuse
 	// 2) Not present in cache or invalid => fetch
 
-	const cache: Partial<Record<DayString, CacheItem<Meal[]>>> = {}
+	const cache: Partial<Record<DayString, FetchFunction<Meal[]>>> = {}
 	const cacheInterval = Duration.fromObject({ minutes: 1 })
 
+	function cacheName(id: CanteenID): string {
+		return `canteen-${id}-meals`
+	}
+
 	async function getMeals(date: DayString): Promise<Meal[]> {
-		const cacheItem = cache[date]
-		if (cacheItem && isValid(cacheItem, cacheInterval)) {
-			console.debug(`[CanteenDetail] Cache hit for ${date}`)
-			return cacheItem.data!
-		} else {
-			console.debug(`[CanteenDetail] Cache miss for ${date}`)
-			const meals = await API.meals.list(canteen.id, selectedDate)
-			cache[date] = {
-				data: meals,
-				timestamp: DateTime.now()
-			}
-			return meals
+		let cacheFunction = cache[date]
+		if (cacheFunction === undefined) {
+			cacheFunction = createCache(
+				cacheName(canteen.id),
+				() => API.meals.list(canteen.id, selectedDate),
+				cacheInterval
+			)
+			cache[date] = cacheFunction
 		}
+
+		return cacheFunction()
 	}
 
 	async function updateMeals() {

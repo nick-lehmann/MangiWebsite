@@ -1,26 +1,14 @@
-import { DateTime, Duration } from 'luxon'
-
-export type CacheItem<T> = {
-	data: T | undefined
-	timestamp: DateTime | undefined
-}
+import { DateTime, type Duration } from 'luxon'
+import type { CacheItem } from './types.js'
 
 export type FetchFunction<T> = () => Promise<T>
-
-export function isValid<T>(cacheItem: CacheItem<T>, interval: Duration): boolean {
-	return (
-		cacheItem.data !== undefined &&
-		cacheItem.timestamp !== undefined &&
-		DateTime.now() <= cacheItem.timestamp.plus(interval)
-	)
-}
 
 export function createCache<T>(
 	name: string,
 	fetch: FetchFunction<T>,
 	cacheInterval: Duration
 ): FetchFunction<T> {
-	const cache: CacheItem<T> = {
+	let cache: CacheItem<T> = {
 		data: undefined,
 		timestamp: undefined
 	}
@@ -35,8 +23,10 @@ export function createCache<T>(
 		} else {
 			console.debug(`[Cache] Renew ${name}`)
 			const data = await fetch()
-			cache.data = data
-			cache.timestamp = DateTime.now()
+			cache = {
+				data,
+				timestamp: DateTime.now()
+			}
 			return data
 		}
 	}

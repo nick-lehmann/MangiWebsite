@@ -1,6 +1,6 @@
+import { createCache } from '$lib/cache/cache.js'
 import { Duration } from 'luxon'
 import { API } from '../lib/api.js'
-import { createCache } from '../lib/cache.js'
 import type { PageServerLoad } from './$types'
 
 const fetchCanteens = createCache(
